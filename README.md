@@ -1,6 +1,6 @@
 <h1 align="center">Movielense</h1>
 
-#Content 
+# Content 
 
 1. [Introduction](#intr)
 2. [Aims and Objectives](#aim)
@@ -104,20 +104,25 @@ We can see that there are 71567 userIds and 65133 movieIds,however, we should de
 | 69878  | 10677   |
 
 The minimal rating is 0.5, and the maximum is 5.0. 
+
 ![rating skewness](images/rating.png)
 
 It is obvious that some people preferred one movie genre to another, therefore, it is worth to investigate the effect of the genre on the movie rating. We will look at top 20 genres in the data set. We can see that the top genre is Drama followed by Comedy and Action. 
+
 ![standard error by genres](images/se-genres.png)
 
 As we established there are 10677 movies in the data set and using the logic we can say that some movies are rated watched more than others and therefore are rated more frequently. Whereas, others can be rated only few times. We can see that some movies were rated only one time, and some were rated for 
 more than 10'000 time.
+
 ![rating per movies](images/rating-movie.png)
 
 As we defined previously there is 69878 and we can check the number of ratings given by them. We can see that some users have rated less than 30 movies, and this will underestimate our models.
+
 ![rating-user](images/rating-user.png)
 
 We also know that more recent movies are tend to be rated more frequently than older ones. Therefore we can convert the timestamp column of the edx data set 
 into a date of the rating was given. Afterwards, we will be able to explore the relationship of the date and rating. Looking at the graph can suggest some relationship between the time and the rating, however, there is no strong correlation. 
+
 ![rating-time](images/rating-time.png)
 
 <a name="methods"></a>
