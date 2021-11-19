@@ -127,3 +127,7 @@ into a date of the rating was given. Afterwards, we will be able to explore the 
 
 <a name="methods"></a>
 
+# Methods
+
+The start model assumes the same prediction for all users and movies, explaining difference by random variation. Here ![mu](https://latex.codecogs.com/gif.latex?%5Cmu)represents the "true" rating for all movies. ![epsilon](https://latex.codecogs.com/gif.latex?%5Cepsilon%7B%5Ccolor%7BRed%7D%7D) is an independent errors sampled from the same distribution, that is centered at zero. The first equation to use will be: 
+![equation1](https://latex.codecogs.com/gif.latex?%5Chat%7BY%7D_%7Bu%2Ci%7D%3D%5Cmu%20&plus;%20%5Cepsilon_%7Bu%2Ci%7D)
