@@ -129,5 +129,77 @@ into a date of the rating was given. Afterwards, we will be able to explore the 
 
 # Methods
 
-The start model assumes the same prediction for all users and movies, explaining difference by random variation. Here ![mu](https://latex.codecogs.com/gif.latex?%5Cmu)represents the "true" rating for all movies. ![epsilon](https://latex.codecogs.com/gif.latex?%5Cepsilon%7B%5Ccolor%7BRed%7D%7D) is an independent errors sampled from the same distribution, that is centered at zero. The first equation to use will be: 
+<a name="linear"></a>
+
+## Linear Model 
+
+The start model assumes the same prediction for all users and movies, explaining difference by random variation. Here ![mu](https://latex.codecogs.com/gif.latex?%5Cmu) represents the "true" rating for all movies. ![epsilon](https://latex.codecogs.com/gif.latex?%5Cepsilon%7B%5Ccolor%7BRed%7D%7D) is an independent errors sampled from the same distribution, that is centered at zero. The first equation to use will be: 
 ![equation1](https://latex.codecogs.com/gif.latex?%5Chat%7BY%7D_%7Bu%2Ci%7D%3D%5Cmu%20&plus;%20%5Cepsilon_%7Bu%2Ci%7D)
+
+The ![hatY](https://latex.codecogs.com/gif.latex?%5Chat%7BY%7D) is the predicted rating. Any additional value will increase the  root mean squared error (RMSE).
+![equation2](https://latex.codecogs.com/gif.latex?RMSE%20%3D%20%5Csqrt%7B%5Cfrac%7B1%7D%7BN%7D%5Csum_%7Bu%2Ci%7D%28%5Chat%7By%7D_%7Bu%2Ci%7D-y_%7Bu%2Ci%7D%29%5E2%7D)
+
+Therefore, we will add an additional variable ![b_i](https://latex.codecogs.com/gif.latex?b_i) that represents the average ranking for the movie i, improving our RMSE model: 
+
+![equation3](https://latex.codecogs.com/gif.latex?b_i%20%3D%20mean%28%5Chat%7BY%7D_%7Bu%2Ci%7D-%5Cmu%29)
+
+![equation4](https://latex.codecogs.com/gif.latex?%5Chat%7BY%7D_%7Bu%2Ci%7D%3D%5Cmu&plus;b_i&plus;%5Cepsilon_%7Bu%2Ci%7D)
+
+Knowing that some users ranked more movies than other users brings in place another bias, user-specific effect. We will call this variable ![bu](https://latex.codecogs.com/gif.latex?b_u), and therefore, increase the RMSE: 
+![equation5](https://latex.codecogs.com/gif.latex?%5Chat%7BY%7D_%7Bu%2Ci%7D%3D%5Cmu&plus;b_i&plus;b_u&plus;%5Cepsilon_%7Bu%2Ci%7D)
+From the data exploration we defined that there is some effect of the time on the rating, therefore we can imply time-specific effect to the RMSE model. However, the correlation was not significant and may cause in decrease of the RMSE, so we would not use time-specific effect in our analysis. 
+
+<a name="reg"></a>
+
+## Regularisation 
+The linear model ![equation6](https://latex.codecogs.com/gif.latex?%5Chat%7BY%7D_%7Bu%2Ci%7D%3D%5Cmu&plus;b_i&plus;b_u&plus;%5Cepsilon_%7Bu%2Ci%7D) will provide a good estimation of ratings, however it will not penalize large estimates that come from small samples. For example, movies that were rated few times or users that gave ratings for very few movies. Not accounting this will lead to the large estimated errors. 
+Therefore, the estimated value will be improved by applying the penalty term. The b's estimate now will be: 
+
+![equation7](https://latex.codecogs.com/gif.latex?%5Cfrac%7B1%7D%7BN%7D%5Csum_%7Bu%2Ci%7D%28y_%7Bu%2Ci%7D-%5Cmu-b_i%29%5E2&plus;%5Clambda%5Csum_ib_i%5E2)
+
+The ![equation8](https://latex.codecogs.com/gif.latex?%5Cfrac%7B1%7D%7BN%7D%5Csum_%7Bu%2Ci%7D%28y_%7Bu%2Ci%7D-%5Cmu-b_i%29%5E2) is the mean square error, and the ![penalty term](https://latex.codecogs.com/gif.latex?%5Clambda%5Csum_ib_i%5E2) is a penalty term. Note that when b is getting large the penalty term increases. Now we can calculate the movie-specific and the user-specific effects using regularization: 
+
+1. ![b_i](https://latex.codecogs.com/gif.latex?%5Chat%7Bb_i%7D%20%3D%20%5Cfrac%7B1%7D%7B%5Clambda%20&plus;%20n_i%7D%5Csum%5E%7Bn_i%7D_%7Bu%3D1%7D%28y_%7Bu%2Ci%7D-%5Chat%7B%5Cmu%7D%29)
+2. ![b_u](https://latex.codecogs.com/gif.latex?%5Chat%7Bb_u%7D%20%3D%20%5Cfrac%7B1%7D%7B%5Clambda%20&plus;%20n_u%7D%5Csum%5E%7Bn_u%7D_%7Bi%3D1%7D%28y_%7Bu%2Ci%7D-%5Chat%7Bb_i%7D-%5Chat%7B%5Cmu%7D%29)
+
+Here ![lambda](https://latex.codecogs.com/gif.latex?%5Clambda) is a tuning parameter and we can use cross-validation to choose the minimum one that gives the most accurate RMSE.
+
+<a name="matrix"></a>
+
+## Matrix Factorisation 
+
+Data can be converted into matrix to study the same rating patterns in the movies and users groups. Each user gets a row and each movie gets a column. The aim is to approximate the large matrix ![](https://latex.codecogs.com/gif.latex?R_%7Bm%5Ctimes%20n%7D) into two smaller vectors ![](https://latex.codecogs.com/gif.latex?P_%7Bk%5Ctimes%20m%7D) and ![](https://latex.codecogs.com/gif.latex?Q_%7Bk%5Ctimes%20m%7D), such that : ![](https://latex.codecogs.com/gif.latex?R%20%5Capprox%20P%27Q). ![](https://latex.codecogs.com/gif.latex?p_u) is the u-th row of P, and ![](https://latex.codecogs.com/gif.latex?q_i) is the v-th row of Q. Therefore, the the rating given by the user ![](https://latex.codecogs.com/gif.latex?u) for the movie ![](https://latex.codecogs.com/gif.latex?i) is ![](https://latex.codecogs.com/gif.latex?p_uq_i%27).This allows us to apply more variance in the original RMSE model: 
+
+![equation9](https://latex.codecogs.com/gif.latex?%5Chat%7BY%7D_%7Bu%2Ci%7D%3D%5Cmu&plus;b_i&plus;b_u&plus;p_uq_i&plus;%5Cepsilon_%7Bi%2Cj%7D)
+
+We can use Singular value composition (SVD) that finds the vectors p and q that permit us to write the matrix of residuals r with m rows and n columns. By using principal components analysis (PCA), matrix factorization can capture structure in the data determined by user opinions about movies. 
+For Matrix Factorisation we will user the Recosystem package. 
+
+<a name="res"></a>
+
+# Results
+
+| Method                                                |  RMSE         | 
+| ------------------------------------------------------| ------------- | 
+| Goal RMSE                                             | 0.8649000     | 
+| Monte Carlo simulation                                | 1.4998974     |
+| Just the average                                      | 1.0603313     | 
+| Movie Effect Model                                    | 0.9439087     | 
+| Movie + User Effect Model                             | 0.8653488     | 
+| Regularised Movie + User Effect Model                 | 0.8648170     | 
+| Matrix Factorisation	                                | 0.7823751     |
+
+<a name="conc"></a>
+
+# Conclusion
+
+Using the training set and validation set we have successfully trained several linear regression models, which we studied in the previous courses of the HarvardX Data Science programme. We identified that the linear regression model using regularised user and movie effect model and matrix factorisation gave the desired result of the RMSE < 0.8649000. The matrix factorisation produced the RMSE = 0.7823751, and we achieved this using the recosystem package and model from the (https://www.kdnuggets.com/2019/09/machine-learning-recommender-systems.html). 
+
+<a name="ref"></a>
+
+# References
+
+1. Irizarry, R. (2021). Introduction to Data Science. Retrieved 25 October 2021, from https://rafalab.github.io/dsbook/
+2. Netflix Prize - Wikipedia. (2021). Retrieved 25 October 2021, from https://en.wikipedia.org/wiki/Netflix_Prize
+3. Qiu, Y. (2021). recosystem: Recommender System Using Parallel Matrix Factorization. Retrieved 25 October 2021, from https://cran.r-project.org/web/packages/recosystem/vignettes/introduction.html
+4. Seif, G. (2021). An Easy Introduction to Machine Learning Recommender Systems - KDnuggets. Retrieved 25 October 2021, from https://www.kdnuggets.com/2019/09/machine-learning-recommender-systems.html
